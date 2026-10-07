@@ -71,7 +71,9 @@ window.PROJECTS = [
       'Adaptation web du jeu de cartes de Bruno Faidutti : nains, chevaliers et gobelins s\'affrontent ' +
       'sur des manches aux règles toujours différentes. Mon premier jeu de société en ligne, qui a servi de base à Skull King.',
     tags: ['Node.js', 'Express', 'Socket.IO'],
-    url: null,
+    url: 'https://roi-des-nains.onrender.com',
+    linkLabel: 'Jouer',
+    render: true,
     repo: 'https://github.com/Ghomerr/roidesnains',
   },
   {
