@@ -5,12 +5,13 @@
 // status : 'wip' (en dev) | 'almost' (presque fini) | 'done' (terminé) | 'abandoned' (abandonné)
 // url    : lien vers le projet lui-même (null si pas de lien), linkLabel : texte du bouton
 // render : true si hébergé sur l'offre gratuite de Render (serveur qui s'endort)
+// downloads : (optionnel) boutons de téléchargement par OS ('windows' | 'macos' | 'linux')
 window.PROJECTS = [
   {
     id: 'dungeon-escape',
     title: 'Dungeon Escape',
     kind: 'Jeu coopératif multijoueur · Web',
-    status: 'almost',
+    status: 'done',
     featured: true,
     image: 'assets/img/dungeon-escape.webp',
     imageAlt: 'Un dragon rouge sur un tas d\'or dans un donjon',
@@ -28,7 +29,7 @@ window.PROJECTS = [
   {
     id: 'music-reader',
     title: 'Lect\'O\'Note Matic 3000',
-    kind: 'Application web installable (PWA)',
+    kind: 'Application de bureau · Windows, macOS, Linux',
     status: 'wip',
     image: 'assets/img/music-reader.webp',
     imageAlt: 'Extrait de partition : Chanson de Fortunio d\'Offenbach',
@@ -41,6 +42,23 @@ window.PROJECTS = [
     linkLabel: 'Ouvrir',
     render: true,
     repo: 'https://github.com/Ghomerr/music-reader',
+    downloads: {
+      version: 'v1.0.0',
+      release: 'https://github.com/Ghomerr/music-reader/releases/tag/v1.0.0',
+      files: [
+        { os: 'windows', label: 'Windows', note: 'Installateur', size: '184 Mo',
+          url: 'https://github.com/Ghomerr/music-reader/releases/download/v1.0.0/LectONote-1.0.0-windows-installation.exe' },
+        { os: 'macos', label: 'macOS', note: 'Apple Silicon', size: '216 Mo',
+          url: 'https://github.com/Ghomerr/music-reader/releases/download/v1.0.0/LectONote-1.0.0-mac-arm64.dmg' },
+        { os: 'linux', label: 'Linux', note: 'AppImage', size: '227 Mo',
+          url: 'https://github.com/Ghomerr/music-reader/releases/download/v1.0.0/LectONote-1.0.0-linux-x86_64.AppImage' },
+      ],
+      // Liens secondaires, sous les boutons
+      extra: [
+        { os: 'macos', label: 'Mac Intel', url: 'https://github.com/Ghomerr/music-reader/releases/download/v1.0.0/LectONote-1.0.0-mac-x64.dmg' },
+        { os: 'windows', label: 'Windows portable', url: 'https://github.com/Ghomerr/music-reader/releases/download/v1.0.0/LectONote-1.0.0-windows-portable.zip' },
+      ],
+    },
   },
   {
     id: 'skull-king',
