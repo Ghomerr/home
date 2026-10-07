@@ -18,6 +18,20 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="assets/css/style.css">
+  <!-- Statistiques de visite PostHog (UE), sans cookie : pas de bandeau de consentement nécessaire -->
+  <script>
+    !function(t,e){var o,n,p,r;e.__SV||(window.posthog=e,e._i=[],e.init=function(i,s,a){function g(t,e){var o=e.split(".");2==o.length&&(t=t[o[0]],e=o[1]),t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}}(p=t.createElement("script")).type="text/javascript",p.crossOrigin="anonymous",p.async=!0,p.src=s.api_host.replace(".i.posthog.com","-assets.i.posthog.com")+"/static/array.js",(r=t.getElementsByTagName("script")[0]).parentNode.insertBefore(p,r);var u=e;for(void 0!==a?u=e[a]=[]:a="posthog",u.people=u.people||[],u.toString=function(t){var e="posthog";return"posthog"!==a&&(e+="."+a),t||(e+=" (stub)"),e},u.people.toString=function(){return u.toString(1)+".people (stub)"},o="init capture register register_once unregister opt_out_capturing has_opted_out_capturing opt_in_capturing reset".split(" "),n=0;n<o.length;n++)g(u,o[n]);e._i.push([i,s,a])},e.__SV=1)}(document,window.posthog||[]);
+    if (location.hostname === 'ghomerr.github.io') { // pas de stats pour les tests en local
+      posthog.init('phc_CSjdhXvkwezgmnua3YRb6gRfnyetNJqHXBcsEkPw5Fgq', {
+        api_host: 'https://eu.i.posthog.com',
+        cookieless_mode: 'always',
+        person_profiles: 'identified_only',
+        autocapture: false,
+        disable_session_recording: true
+      });
+      posthog.register({ app: 'home' });
+    }
+  </script>
 </head>
 <body>
   <a class="skip-link" href="#projets">Aller aux projets</a>
@@ -29,7 +43,7 @@
         <span>Ghomerr</span>
       </a>
       <nav class="topbar-actions">
-        <a class="btn btn-ghost" href="https://x.com/ghomerr" target="_blank" rel="noopener">
+        <a class="btn btn-ghost" href="https://x.com/ghomerr" data-track="reseau" data-reseau="x" target="_blank" rel="noopener">
           <svg class="x-logo" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
           <span class="hide-sm">@Ghomerr</span>
         </a>
@@ -45,7 +59,7 @@
     <section class="hero">
       <div class="hero-glow" aria-hidden="true"></div>
       <div class="container hero-inner">
-        <a class="avatar" href="https://x.com/ghomerr" target="_blank" rel="noopener" aria-label="Profil X de Ghomerr">
+        <a class="avatar" href="https://x.com/ghomerr" data-track="reseau" data-reseau="x" target="_blank" rel="noopener" aria-label="Profil X de Ghomerr">
           <img src="assets/img/avatar.webp" alt="Avatar de Ghomerr : Homer Simpson et son donut" width="256" height="256">
         </a>
         <div class="hero-text">
@@ -58,7 +72,7 @@
           </p>
           <div class="hero-cta">
             <a class="btn btn-primary btn-lg" href="#projets">Voir les projets</a>
-            <a class="btn btn-x btn-lg" href="https://x.com/ghomerr" target="_blank" rel="noopener">
+            <a class="btn btn-x btn-lg" href="https://x.com/ghomerr" data-track="reseau" data-reseau="x" target="_blank" rel="noopener">
               <svg class="x-logo" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
               Me suivre sur X
             </a>
@@ -86,11 +100,11 @@
     <div class="container footer-inner">
       <p>© <span id="year">2026</span> Ghomerr · Page statique hébergée sur GitHub Pages</p>
       <p>
-        <a href="https://x.com/ghomerr" target="_blank" rel="noopener">X / Twitter</a>
+        <a href="https://x.com/ghomerr" data-track="reseau" data-reseau="x" target="_blank" rel="noopener">X / Twitter</a>
         <span aria-hidden="true">·</span>
-        <a href="https://github.com/Ghomerr" target="_blank" rel="noopener">GitHub</a>
+        <a href="https://github.com/Ghomerr" data-track="reseau" data-reseau="github" target="_blank" rel="noopener">GitHub</a>
         <span aria-hidden="true">·</span>
-        <a href="https://ghomerr.itch.io/" target="_blank" rel="noopener">itch.io</a>
+        <a href="https://ghomerr.itch.io/" data-track="reseau" data-reseau="itch.io" target="_blank" rel="noopener">itch.io</a>
       </p>
     </div>
   </footer>

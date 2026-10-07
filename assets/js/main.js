@@ -24,12 +24,14 @@
   function renderCard(p) {
     var status = STATUSES[p.status] || { label: p.status };
     var actions = p.url
-      ? '<a class="btn btn-primary card-link" href="' + escapeHtml(p.url) + '" target="_blank" rel="noopener">' +
+      ? '<a class="btn btn-primary card-link" href="' + escapeHtml(p.url) + '" target="_blank" rel="noopener" ' +
+        'data-track="jouer" data-projet="' + escapeHtml(p.id) + '">' +
         escapeHtml(p.linkLabel || 'Voir le projet') + ICONS.arrow + '</a>'
       : '<span class="btn btn-disabled">' + (p.status === 'wip' ? 'Lien à venir' : 'Pas de version en ligne') + '</span>';
     if (p.repo) {
       actions +=
         '<a class="btn-icon" href="' + escapeHtml(p.repo) + '" target="_blank" rel="noopener" ' +
+        'data-track="github" data-projet="' + escapeHtml(p.id) + '" ' +
         'title="Code source sur GitHub" aria-label="Code source de ' + escapeHtml(p.title) + ' sur GitHub">' +
         ICONS.github + '</a>';
     }
@@ -103,6 +105,20 @@
     });
   }
 
+  // Clics suivis dans PostHog (si le script est chargé) : liens des projets et réseaux
+  function setupClickTracking() {
+    document.addEventListener('click', function (event) {
+      var link = event.target.closest('[data-track]');
+      if (!link || !window.posthog || !window.posthog.capture) return;
+      var type = link.getAttribute('data-track');
+      if (type === 'reseau') {
+        window.posthog.capture('clic_reseau', { reseau: link.getAttribute('data-reseau') });
+      } else {
+        window.posthog.capture('clic_projet', { projet: link.getAttribute('data-projet'), type: type });
+      }
+    });
+  }
+
   function setupTheme() {
     var root = document.documentElement;
     var toggle = document.getElementById('theme-toggle');
@@ -128,6 +144,7 @@
   setupFilters(filters, grid);
   setupReveal(grid);
   setupTheme();
+  setupClickTracking();
 
   document.getElementById('stat-projects').textContent = projects.length;
   document.getElementById('stat-online').textContent = projects.filter(function (p) { return p.url; }).length;
