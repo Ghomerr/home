@@ -70,20 +70,20 @@ window.PROJECTS = [
     render: true,
     repo: 'https://github.com/Ghomerr/music-reader',
     downloads: {
-      version: 'v1.0.0',
-      release: 'https://github.com/Ghomerr/music-reader/releases/tag/v1.0.0',
+      version: 'v1.1.0',
+      release: 'https://github.com/Ghomerr/music-reader/releases/tag/v1.1.0',
       files: [
         { os: 'windows', label: 'Windows', note: 'Installateur', size: '184 Mo',
-          url: 'https://github.com/Ghomerr/music-reader/releases/download/v1.0.0/LectONote-1.0.0-windows-installation.exe' },
+          url: 'https://github.com/Ghomerr/music-reader/releases/download/v1.1.0/LectONote-1.1.0-windows-installation.exe' },
         { os: 'macos', label: 'macOS', note: 'Apple Silicon', size: '216 Mo',
-          url: 'https://github.com/Ghomerr/music-reader/releases/download/v1.0.0/LectONote-1.0.0-mac-arm64.dmg' },
+          url: 'https://github.com/Ghomerr/music-reader/releases/download/v1.1.0/LectONote-1.1.0-mac-arm64.dmg' },
         { os: 'linux', label: 'Linux', note: 'AppImage', size: '227 Mo',
-          url: 'https://github.com/Ghomerr/music-reader/releases/download/v1.0.0/LectONote-1.0.0-linux-x86_64.AppImage' },
+          url: 'https://github.com/Ghomerr/music-reader/releases/download/v1.1.0/LectONote-1.1.0-linux-x86_64.AppImage' },
       ],
       // Liens secondaires, sous les boutons
       extra: [
-        { os: 'macos', label: 'Mac Intel', url: 'https://github.com/Ghomerr/music-reader/releases/download/v1.0.0/LectONote-1.0.0-mac-x64.dmg' },
-        { os: 'windows', label: 'Windows portable', url: 'https://github.com/Ghomerr/music-reader/releases/download/v1.0.0/LectONote-1.0.0-windows-portable.zip' },
+        { os: 'macos', label: 'Mac Intel', url: 'https://github.com/Ghomerr/music-reader/releases/download/v1.1.0/LectONote-1.1.0-mac-x64.dmg' },
+        { os: 'windows', label: 'Windows portable', url: 'https://github.com/Ghomerr/music-reader/releases/download/v1.1.0/LectONote-1.1.0-windows-portable.zip' },
       ],
     },
   },
