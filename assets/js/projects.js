@@ -1,8 +1,9 @@
 // Liste des projets affichés sur la page.
-// Pour ajouter un projet : copier un bloc, déposer une image 16:10 (960x600 idéalement)
-// dans assets/img/, et compléter les champs.
+// Pour ajouter un projet : copier un bloc, déposer 1 à 3 images 16:10 (960x600 idéalement)
+// dans assets/img/ (ou assets/img/gallery/), et compléter les champs.
 //
 // status : 'wip' (en dev) | 'almost' (presque fini) | 'done' (terminé) | 'abandoned' (abandonné)
+// images : la 1re sert de couverture ; avec 2 ou 3 images, la tuile devient un carrousel
 // url    : lien vers le projet lui-même (null si pas de lien), linkLabel : texte du bouton
 // render : true si hébergé sur l'offre gratuite de Render (serveur qui s'endort)
 // downloads : (optionnel) boutons de téléchargement par OS ('windows' | 'macos' | 'linux')
@@ -13,8 +14,11 @@ window.PROJECTS = [
     kind: 'Jeu coopératif multijoueur · Web',
     status: 'done',
     featured: true,
-    image: 'assets/img/dungeon-escape.webp',
-    imageAlt: 'Un dragon rouge sur un tas d\'or dans un donjon',
+    images: [
+      { src: 'assets/img/dungeon-escape.webp', alt: 'Un dragon rouge sur un tas d\'or dans un donjon' },
+      { src: 'assets/img/gallery/dungeon-escape-board.webp', alt: 'Un gnome, un nain et un pyromancien sur une tuile du donjon, face à un dragon rouge' },
+      { src: 'assets/img/gallery/dungeon-escape-event.webp', alt: 'Carte Événement « Malédiction » : des aventuriers devant un portail runique' },
+    ],
     accent: '#e0603a',
     description:
       'Jeu de survie coopératif jusqu\'à 6 joueurs, inspiré de Sub Terra à la sauce Donjons & Dragons. ' +
@@ -27,12 +31,35 @@ window.PROJECTS = [
     repo: 'https://github.com/Ghomerr/dungeon-escape',
   },
   {
+    id: 'malefic-realms',
+    title: 'Malefic Realms',
+    kind: 'Jeu coopératif multijoueur · Web',
+    status: 'wip',
+    images: [
+      { src: 'assets/img/gallery/malefic-realms.webp', alt: 'Les quatre factions maléfiques : morts-vivants, démons, aboleths et fanatiques de Tiamat' },
+      { src: 'assets/img/gallery/malefic-realms-board.webp', alt: 'Le plateau de jeu : des continents reliés par des chemins lumineux' },
+      { src: 'assets/img/gallery/malefic-realms-heroes.webp', alt: 'Cartes de héros illustrées : paladine, divinatrice et érudit' },
+    ],
+    accent: '#9b5de5',
+    description:
+      'Toutes les règles de Pandemic dans un univers Donjons & Dragons : morts-vivants, démons, aboleths et ' +
+      'fanatiques de Tiamat envahissent quatre continents. De 2 à 4 héros coopèrent pour contenir la menace ' +
+      'et forger les quatre reliques qui les vaincront.',
+    tags: ['Node.js', 'Express', 'Socket.IO', 'De 2 à 4 héros'],
+    url: null, // pas encore en ligne (dépôt privé : pas de lien GitHub)
+    linkLabel: 'Jouer',
+    render: true,
+  },
+  {
     id: 'music-reader',
     title: 'Lect\'O\'Note Matic 3000',
     kind: 'Application de bureau · Windows, macOS, Linux',
     status: 'wip',
-    image: 'assets/img/music-reader.webp',
-    imageAlt: 'Extrait de partition : Chanson de Fortunio d\'Offenbach',
+    images: [
+      { src: 'assets/img/music-reader.webp', alt: 'Extrait de partition : Chanson de Fortunio d\'Offenbach' },
+      { src: 'assets/img/gallery/music-reader-player.webp', alt: 'Partition reconstruite d\'Over the Rainbow en cours de lecture, mesure surlignée, réglages des lignes et du tempo' },
+      { src: 'assets/img/gallery/music-reader-analyse.webp', alt: 'Bilan de l\'analyse : choix de la police de notes et résumé de la partition assemblée' },
+    ],
     accent: '#6366f1',
     description:
       'Lecture de partitions à partir d\'images : reconnaissance des notes, relecture et correction, ' +
@@ -65,8 +92,11 @@ window.PROJECTS = [
     title: 'Skull King',
     kind: 'Jeu de cartes multijoueur · Web',
     status: 'done',
-    image: 'assets/img/skull-king.webp',
-    imageAlt: 'Logo doré de Skull King sur une boîte en bois',
+    images: [
+      { src: 'assets/img/skull-king.webp', alt: 'Logo doré de Skull King sur une boîte en bois' },
+      { src: 'assets/img/gallery/skull-king-table.webp', alt: 'Une manche en cours : trois cartes pirates jouées sur la table, la main du joueur en dessous' },
+      { src: 'assets/img/gallery/skull-king-cards.webp', alt: 'Cartes spéciales en éventail : pirates, sirène, Skull King et Tigresse' },
+    ],
     accent: '#d9a43a',
     description:
       'Le jeu de plis des pirates, version en ligne : annoncez combien de plis vous allez remporter, ' +
@@ -82,8 +112,11 @@ window.PROJECTS = [
     title: 'Le Roi des Nains',
     kind: 'Jeu de cartes multijoueur · Web',
     status: 'done',
-    image: 'assets/img/roidesnains.webp',
-    imageAlt: 'Le roi des nains sur son trône, entouré d\'un chevalier et d\'un gobelin',
+    images: [
+      { src: 'assets/img/roidesnains.webp', alt: 'Le roi des nains sur son trône, entouré d\'un chevalier et d\'un gobelin' },
+      { src: 'assets/img/gallery/roidesnains-trick.webp', alt: 'Un pli en cours : deux cartes gobelins sur la table, la main du joueur en dessous' },
+      { src: 'assets/img/gallery/roidesnains-quest.webp', alt: 'Choix de la quête de la donne, carte spéciale Sorcier et main de cartes illustrées' },
+    ],
     accent: '#c2412d',
     description:
       'Adaptation web du jeu de cartes de Bruno Faidutti : nains, chevaliers et gobelins s\'affrontent ' +
@@ -99,8 +132,7 @@ window.PROJECTS = [
     title: 'Magic Hat\'venture',
     kind: 'Jeu de plateforme 2D · PC',
     status: 'abandoned',
-    image: 'assets/img/magic-hatventure.webp',
-    imageAlt: 'Un petit mage en pixel art dans une forêt',
+    images: [{ src: 'assets/img/magic-hatventure.webp', alt: 'Un petit mage en pixel art dans une forêt' }],
     accent: '#3fa34d',
     description:
       'Plateformer en pixel art : un petit mage change de chapeau pour lancer ses sorts (feu, glace, électricité, ' +
@@ -115,8 +147,7 @@ window.PROJECTS = [
     title: 'Brick Tag Game',
     kind: 'Prototype de jeu multijoueur local',
     status: 'abandoned',
-    image: 'assets/img/brick-tag.webp',
-    imageAlt: 'Arène en pixel art remplie de briques de quatre couleurs, un personnage dans chaque coin',
+    images: [{ src: 'assets/img/brick-tag.webp', alt: 'Arène en pixel art remplie de briques de quatre couleurs, un personnage dans chaque coin' }],
     accent: '#22b8cf',
     description:
       'Quatre héros, une arène remplie de briques colorées. Chacun part de son coin et casse les briques ' +

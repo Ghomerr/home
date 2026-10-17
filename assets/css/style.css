@@ -234,6 +234,52 @@ h1, h2, h3 { font-family: var(--font-display); line-height: 1.15; margin: 0; let
 .card-media { position: relative; aspect-ratio: 16 / 10; overflow: hidden; background: color-mix(in srgb, var(--accent) 20%, var(--bg)); }
 .card-media img { width: 100%; height: 100%; object-fit: cover; transition: transform .6s cubic-bezier(.2, .8, .2, 1); }
 .card:hover .card-media img { transform: scale(1.05); }
+
+/* Images de la tuile : empilées, celle qui est active apparaît en fondu */
+.slide { position: absolute; inset: 0; overflow: hidden; }
+.carousel .slide { opacity: 0; transition: opacity .9s ease; }
+.carousel .slide.is-active { opacity: 1; animation: drift-in 7s ease-out both; }
+/* Léger zoom lent sur l'image affichée */
+@keyframes drift-in { from { transform: scale(1.06); } to { transform: scale(1); } }
+
+/* Carrousel : flèches (au survol) et points ; le point actif se remplit puis passe à l'image suivante */
+.carousel { --car-interval: 5s; }
+.car-nav {
+  position: absolute; top: 50%; z-index: 3; display: grid; place-items: center;
+  width: 36px; height: 36px; margin-top: -18px; padding: 0; border: 0; border-radius: 50%;
+  background: rgba(12, 11, 20, .55); color: #fff; cursor: pointer;
+  backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+  opacity: 0; transition: opacity .25s ease, background-color .2s ease, transform .2s ease;
+}
+.car-nav svg { width: 18px; height: 18px; }
+.car-prev { left: 10px; }
+.car-prev svg { transform: rotate(180deg); }
+.car-next { right: 10px; }
+.car-nav:hover { background: color-mix(in srgb, var(--accent) 80%, #000); transform: scale(1.08); }
+.card:hover .car-nav, .carousel:focus-within .car-nav { opacity: 1; }
+@media (hover: none) { .car-nav { display: none; } }
+
+.car-dots {
+  position: absolute; left: 50%; bottom: 10px; z-index: 3; transform: translateX(-50%);
+  display: flex; gap: 6px; padding: 5px 8px; border-radius: 999px;
+  background: rgba(12, 11, 20, .45); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+}
+.car-dot {
+  position: relative; width: 8px; height: 8px; padding: 0; border: 0; border-radius: 999px; overflow: hidden;
+  background: rgba(255, 255, 255, .45); cursor: pointer; transition: width .3s ease, background-color .2s ease;
+}
+.car-dot:hover { background: rgba(255, 255, 255, .8); }
+.car-dot.is-active { width: 26px; background: rgba(255, 255, 255, .35); }
+.car-dot.is-active::after {
+  content: ""; position: absolute; inset: 0; border-radius: inherit; background: #fff;
+  transform-origin: left; animation: car-progress var(--car-interval) linear var(--car-delay, 0s) both;
+}
+@keyframes car-progress { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+.carousel.is-paused .car-dot.is-active::after,
+.carousel.is-paused .slide.is-active { animation-play-state: paused; }
+@media (hover: hover) {
+  .card:hover .car-dot.is-active::after { animation-play-state: paused; }
+}
 .card-media::after {
   content: ""; position: absolute; inset: auto 0 0; height: 40%;
   background: linear-gradient(transparent, color-mix(in srgb, var(--surface) 55%, transparent));
@@ -299,12 +345,12 @@ h1, h2, h3 { font-family: var(--font-display); line-height: 1.15; margin: 0; let
 .card-hint { margin: 12px 0 0; font-size: 12px; color: var(--text-muted); opacity: .85; }
 
 /* Tuile vedette : l'image est affichée en entier, le vide autour est comblé par la même image floutée */
-.card--featured .card-media::before {
+.card--featured .slide::before {
   content: ""; position: absolute; inset: -24px;
   background: var(--media-bg) center / cover no-repeat;
   filter: blur(22px) saturate(1.1) brightness(.7);
 }
-.card--featured .card-media img { position: relative; object-fit: contain; }
+.card--featured .slide img { position: relative; object-fit: contain; }
 @media (max-width: 679px) {
   .card--featured .card-media { aspect-ratio: 1 / 1; }
 }

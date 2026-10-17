@@ -17,6 +17,8 @@
       '<svg viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>',
     arrow:
       '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" d="M7 17 17 7M8 7h9v9"/></svg>',
+    chevron:
+      '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" d="m9 6 6 6-6 6"/></svg>',
   };
 
   function escapeHtml(text) {
@@ -53,6 +55,33 @@
       '</div>';
   }
 
+  // Images de la tuile : une seule, ou un carrousel (fondu enchaîné, points de navigation et flèches)
+  function renderMedia(p, status) {
+    var images = p.images || [];
+    var slides = images.map(function (img, i) {
+      // Tuile vedette : image entière (non rognée) sur un fond flouté de la même image
+      var bg = p.featured ? ' style="--media-bg:url(\'' + escapeHtml(new URL(img.src, document.baseURI).href) + '\')"' : '';
+      return '<div class="slide' + (i === 0 ? ' is-active' : '') + '"' + bg + (i ? ' aria-hidden="true"' : '') + '>' +
+        '<img src="' + escapeHtml(img.src) + '" alt="' + escapeHtml(img.alt || '') + '" loading="lazy" decoding="async" width="960" height="600">' +
+        '</div>';
+    }).join('');
+    var controls = '';
+    if (images.length > 1) {
+      var track = ' data-track="carrousel" data-projet="' + escapeHtml(p.id) + '"';
+      controls =
+        '<button type="button" class="car-nav car-prev"' + track + ' aria-label="Image précédente">' + ICONS.chevron + '</button>' +
+        '<button type="button" class="car-nav car-next"' + track + ' aria-label="Image suivante">' + ICONS.chevron + '</button>' +
+        '<div class="car-dots">' + images.map(function (img, i) {
+          return '<button type="button" class="car-dot' + (i === 0 ? ' is-active' : '') + '"' + track +
+            ' data-index="' + i + '" aria-label="Image ' + (i + 1) + ' sur ' + images.length + '"' +
+            (i === 0 ? ' aria-current="true"' : '') + '></button>';
+        }).join('') + '</div>';
+    }
+    return '<div class="card-media' + (images.length > 1 ? ' carousel' : '') + '">' + slides +
+      '<span class="status status--' + escapeHtml(p.status) + '">' + escapeHtml(status.label) + '</span>' +
+      controls + '</div>';
+  }
+
   function renderCard(p) {
     var status = STATUSES[p.status] || { label: p.status };
     var actions = p.url
@@ -74,13 +103,10 @@
       : '';
 
     return (
-      '<article class="card' + (p.featured ? ' card--featured' : '') + '" data-status="' + escapeHtml(p.status) +
+      '<article class="card' + (p.featured ? ' card--featured' : '') + (p.url ? '' : ' card--nolink') +
+      '" data-status="' + escapeHtml(p.status) + '" data-projet="' + escapeHtml(p.id) +
       '" style="--accent:' + escapeHtml(p.accent || 'var(--brand)') + '">' +
-      // Tuile vedette : image entière (non rognée) sur un fond flouté de la même image
-      '<div class="card-media"' + (p.featured ? ' style="--media-bg:url(\'' + escapeHtml(new URL(p.image, document.baseURI).href) + '\')"' : '') + '>' +
-      '<img src="' + escapeHtml(p.image) + '" alt="' + escapeHtml(p.imageAlt || '') + '" loading="lazy" width="960" height="600">' +
-      '<span class="status status--' + escapeHtml(p.status) + '">' + escapeHtml(status.label) + '</span>' +
-      '</div>' +
+      renderMedia(p, status) +
       '<div class="card-body">' +
       '<p class="card-kicker">' + escapeHtml(p.kind || '') + '</p>' +
       '<h3 class="card-title">' + escapeHtml(p.title) + '</h3>' +
@@ -141,23 +167,102 @@
     });
   }
 
-  // Clics suivis dans PostHog (si le script est chargé) : liens des projets et réseaux
+  // Événement PostHog (si le script est chargé). Avec `once`, une seule fois par page vue.
+  var tracked = {};
+  function track(event, props, once) {
+    if (!window.posthog || !window.posthog.capture) return;
+    if (once) {
+      if (tracked[once]) return;
+      tracked[once] = true;
+    }
+    window.posthog.capture(event, props);
+  }
+
+  // Carrousels : l'animation de la barre de progression du point actif fait défiler les images.
+  // Elle s'arrête au survol et hors de l'écran ; elle n'existe pas si l'utilisateur limite les animations.
+  function setupCarousels(grid) {
+    var carousels = grid.querySelectorAll('.carousel');
+    var current = function (media) {
+      return Array.prototype.indexOf.call(media.querySelectorAll('.slide'), media.querySelector('.slide.is-active'));
+    };
+    var show = function (media, index) {
+      var slides = media.querySelectorAll('.slide');
+      var dots = media.querySelectorAll('.car-dot');
+      index = (index + slides.length) % slides.length;
+      slides.forEach(function (slide, i) {
+        slide.classList.toggle('is-active', i === index);
+        if (i === index) slide.removeAttribute('aria-hidden'); else slide.setAttribute('aria-hidden', 'true');
+      });
+      dots.forEach(function (dot) { dot.classList.remove('is-active'); dot.removeAttribute('aria-current'); });
+      media.style.removeProperty('--car-delay'); // le décalage ne vaut que pour la première image
+      void dots[index].offsetWidth;              // relance la progression, même sur le même point
+      dots[index].classList.add('is-active');
+      dots[index].setAttribute('aria-current', 'true');
+    };
+    var projet = function (media) { return media.closest('.card').getAttribute('data-projet'); };
+
+    carousels.forEach(function (media, i) {
+      // Décalage : les tuiles ne changent pas toutes d'image en même temps
+      media.style.setProperty('--car-delay', (1.5 + i * 0.8) + 's');
+      media.addEventListener('animationend', function (event) {
+        var dot = event.target;
+        if (dot.classList.contains('car-dot') && dot.classList.contains('is-active')) show(media, current(media) + 1);
+      });
+      media.addEventListener('click', function (event) {
+        var btn = event.target.closest('.car-nav, .car-dot');
+        if (!btn) return;
+        event.preventDefault();
+        if (btn.classList.contains('car-dot')) show(media, +btn.getAttribute('data-index'));
+        else show(media, current(media) + (btn.classList.contains('car-prev') ? -1 : 1));
+      });
+      // Balayage sur écran tactile (le lien de la tuile recouvre l'image : on écoute la tuile entière)
+      var card = media.closest('.card');
+      var start = null;
+      card.addEventListener('touchstart', function (event) {
+        var t = event.touches[0], r = media.getBoundingClientRect();
+        start = t.clientY >= r.top && t.clientY <= r.bottom ? { x: t.clientX, y: t.clientY } : null;
+      }, { passive: true });
+      card.addEventListener('touchend', function (event) {
+        if (!start) return;
+        var t = event.changedTouches[0], dx = t.clientX - start.x, dy = t.clientY - start.y;
+        start = null;
+        if (Math.abs(dx) < 40 || Math.abs(dx) < Math.abs(dy) * 1.5) return;
+        show(media, current(media) + (dx < 0 ? 1 : -1));
+        track('clic_projet', { projet: projet(media), type: 'carrousel' }, 'carrousel:' + projet(media));
+      });
+    });
+
+    if (!('IntersectionObserver' in window)) return;
+    var observer = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) { entry.target.classList.toggle('is-paused', !entry.isIntersecting); });
+    }, { threshold: 0.35 });
+    carousels.forEach(function (media) { observer.observe(media); });
+  }
+
+  // Clics suivis dans PostHog : liens des projets, réseaux, carrousels, et tuiles sans lien (projets en dev)
   function setupClickTracking() {
     document.addEventListener('click', function (event) {
       var link = event.target.closest('[data-track]');
-      if (!link || !window.posthog || !window.posthog.capture) return;
+      if (!link) {
+        var card = event.target.closest('.card--nolink');
+        if (card) track('clic_projet', { projet: card.getAttribute('data-projet'), type: 'tuile' }, 'tuile:' + card.getAttribute('data-projet'));
+        return;
+      }
       var type = link.getAttribute('data-track');
       if (type === 'reseau') {
-        window.posthog.capture('clic_reseau', { reseau: link.getAttribute('data-reseau') });
+        track('clic_reseau', { reseau: link.getAttribute('data-reseau') });
       } else if (type === 'telechargement') {
-        window.posthog.capture('telechargement', {
+        track('telechargement', {
           projet: link.getAttribute('data-projet'),
           os: link.getAttribute('data-os'),
           version: link.getAttribute('data-version'),
           fichier: link.getAttribute('data-fichier')
         });
+      } else if (type === 'carrousel') {
+        // Une fois par projet et par visite : on veut savoir qui regarde, pas compter les clics
+        track('clic_projet', { projet: link.getAttribute('data-projet'), type: type }, 'carrousel:' + link.getAttribute('data-projet'));
       } else {
-        window.posthog.capture('clic_projet', { projet: link.getAttribute('data-projet'), type: type });
+        track('clic_projet', { projet: link.getAttribute('data-projet'), type: type });
       }
     });
   }
@@ -186,6 +291,7 @@
   renderFilters(projects, filters);
   setupFilters(filters, grid);
   setupReveal(grid);
+  setupCarousels(grid);
   setupTheme();
   setupClickTracking();
 

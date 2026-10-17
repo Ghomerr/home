@@ -1,11 +1,19 @@
 """Génère les illustrations de la page à partir des repos voisins.
 
 Usage : python tools/build_images.py [chemin/vers/banner.jpg] [chemin/vers/avatar.jpg]
+        python tools/build_images.py --gallery chemin/vers/captures
 Les images produites sont versionnées dans assets/img : ce script n'est utile
 que pour les régénérer (nécessite Pillow).
+
+--gallery produit les images des carrousels (assets/img/gallery/) à partir de captures
+d'écran des jeux en cours de partie (Chrome headless, 1600x900 ; 1440x900 pour
+Lect'O'Note), rangées par projet dans le dossier donné :
+  de/              tools/devcheck.js --gallery de dungeon-escape
+  malefic-realms/  tools/.devcheck de malefic-realms
+  skull-king/, roidesnains/, music-reader/   parties jouées par des bots
 """
 import os, re, random, sys
-from PIL import Image, ImageOps
+from PIL import Image, ImageFilter, ImageOps
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 OUT = os.path.join(HERE, '..', 'assets', 'img')
@@ -106,8 +114,63 @@ def avatar(path):
     save(Image.open(path), 'avatar.webp', size=(256, 256))
 
 
+def card_fan(names, folder, background):
+    """Cartes du jeu en éventail sur un fond flouté."""
+    bg = ImageOps.fit(background.convert('RGB'), (W, H), Image.LANCZOS)
+    bg = bg.filter(ImageFilter.GaussianBlur(6)).point(lambda v: int(v * .55)).convert('RGBA')
+    n = len(names)
+    for i, name in enumerate(names):
+        card = Image.open(os.path.join(folder, name)).convert('RGBA')
+        center = i == n // 2
+        card = card.resize((250 if center else 220, 351 if center else 309), Image.LANCZOS)
+        mask = Image.new('L', card.size, 0)
+        from PIL import ImageDraw
+        ImageDraw.Draw(mask).rounded_rectangle((0, 0, card.width - 1, card.height - 1), radius=14, fill=255)
+        card.putalpha(mask)
+        angle = (n // 2 - i) * 11
+        card = card.rotate(angle, expand=True, resample=Image.BICUBIC)
+        shadow = Image.new('RGBA', card.size, (0, 0, 0, 0))
+        shadow.putalpha(card.getchannel('A').point(lambda a: a * 0.6))
+        shadow = shadow.filter(ImageFilter.GaussianBlur(10))
+        x = W // 2 + (i - n // 2) * 150 - card.width // 2
+        y = H // 2 - card.height // 2 + abs(i - n // 2) * 28 + 10
+        bg.alpha_composite(shadow, (x + 8, y + 12))
+        bg.alpha_composite(card, (x, y))
+    return bg
+
+
+def gallery(shots):
+    """Images des carrousels (2e et 3e images de chaque projet)."""
+    out = os.path.join(OUT, 'gallery')
+    os.makedirs(out, exist_ok=True)
+    shot = lambda *p: Image.open(os.path.join(shots, *p))
+    g = lambda im, name: save(im, os.path.join('gallery', name))
+
+    # Dungeon Escape : les aventuriers face au dragon, puis une carte Événement
+    g(shot('de', '27-sprites-idle.png').crop((110, 20, 830, 470)), 'dungeon-escape-board.webp')
+    g(shot('de', '43-event-card-desktop.png').crop((470, 244, 1130, 656)), 'dungeon-escape-event.webp')
+    # Malefic Realms : les quatre factions, le plateau, le choix des héros
+    g(crop_ratio(Image.open(os.path.join(DEV, 'malefic-realms/static/assets/cards/factions.jpg'))), 'malefic-realms.webp')
+    g(shot('malefic-realms', '10-game-desktop.png').crop((250, 60, 1330, 735)), 'malefic-realms-board.webp')
+    g(shot('malefic-realms', '02-heroes-selected.png').crop((586, 198, 1354, 678)), 'malefic-realms-heroes.webp')
+    # Lect'O'Note : lecture en cours (mesure surlignée), puis le bilan de l'analyse
+    g(shot('music-reader', '4-playing.png'), 'music-reader-player.webp')
+    g(shot('music-reader', '2-analyse.png'), 'music-reader-analyse.webp')
+    # Skull King : la table en pleine manche, puis les cartes spéciales
+    g(shot('skull-king', 'table-6-6.png').crop((360, 160, 1240, 710)), 'skull-king-table.webp')
+    sk = os.path.join(DEV, 'skull-king/static/assets')
+    g(card_fan(['pirate_juanita-jade.jpg', 'mermaid_alyra.jpg', 'skull-king.jpg', 'tigresse_choice.jpg', 'pirate_will-le-bandit.jpg'],
+               sk, Image.open(os.path.join(sk, 'cards-background.jpg'))), 'skull-king-cards.webp')
+    # Roi des Nains : un pli en cours, puis le choix de la quête
+    g(shot('roidesnains', 'trick-1-h8.png').crop((200, 10, 1400, 760)), 'roidesnains-trick.webp')
+    g(shot('roidesnains', 'quest-3.png').crop((250, 80, 1490, 855)), 'roidesnains-quest.webp')
+
+
 if __name__ == '__main__':
     os.makedirs(OUT, exist_ok=True)
+    if len(sys.argv) > 2 and sys.argv[1] == '--gallery':
+        gallery(sys.argv[2])
+        sys.exit()
     dungeon_escape(); skull_king(); roidesnains(); music_reader(); brick_tag()
     if len(sys.argv) > 1: magic_hatventure(sys.argv[1])
     if len(sys.argv) > 2: avatar(sys.argv[2])
