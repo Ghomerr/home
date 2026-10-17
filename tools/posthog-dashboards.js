@@ -99,7 +99,7 @@ limit 50`), L(0, 14, 12, 5)),
 const MR = `properties.app = 'malefic-realms'`;
 const DIFF_ORDER = `multiIf(difficulte = 'Initiation', 1, difficulte = 'Standard', 2, difficulte = 'Héroïque', 3, 4)`;
 const malefic = {
-  key: 'malefic', name: 'Malefic Realms', site: null,
+  key: 'malefic', name: 'Malefic Realms', site: 'https://malefic-realms.onrender.com/',
   description: 'Visites et parties de Malefic Realms (événements serveur partie_lancee / partie_terminee / partie_abandonnee).',
   tiles: [
     visitors('malefic-realms', L(0, 0, 6, 5)),

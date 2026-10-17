@@ -13,7 +13,6 @@ window.PROJECTS = [
     title: 'Dungeon Escape',
     kind: 'Jeu coopératif multijoueur · Web',
     status: 'done',
-    featured: true,
     images: [
       { src: 'assets/img/dungeon-escape.webp', alt: 'Un dragon rouge sur un tas d\'or dans un donjon' },
       { src: 'assets/img/gallery/dungeon-escape-board.webp', alt: 'Un gnome, un nain et un pyromancien sur une tuile du donjon, face à un dragon rouge' },
@@ -46,9 +45,9 @@ window.PROJECTS = [
       'fanatiques de Tiamat envahissent quatre continents. De 2 à 4 héros coopèrent pour contenir la menace ' +
       'et forger les quatre reliques qui les vaincront.',
     tags: ['Node.js', 'Express', 'Socket.IO', 'De 2 à 4 héros'],
-    url: null, // pas encore en ligne (dépôt privé : pas de lien GitHub)
+    url: 'https://malefic-realms.onrender.com/',
     linkLabel: 'Jouer',
-    render: true,
+    render: true, // dépôt privé : pas de lien GitHub
   },
   {
     id: 'music-reader',

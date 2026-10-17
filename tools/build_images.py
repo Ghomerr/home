@@ -42,8 +42,7 @@ def crop_ratio(im, cx=0.5, cy=0.5, ratio=W / H):
 
 def dungeon_escape():
     im = Image.open(os.path.join(DEV, 'dungeon-escape/static/assets/adventurers/dragon.png'))
-    # Carré : la tuile vedette occupe un bloc 2x2 sur grand écran
-    save(im, 'dungeon-escape.webp', size=(900, 900))
+    save(crop_ratio(im, cy=0.18), 'dungeon-escape.webp')  # cadré sur la tête du dragon
 
 
 def skull_king():
