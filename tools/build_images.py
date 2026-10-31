@@ -40,6 +40,15 @@ def crop_ratio(im, cx=0.5, cy=0.5, ratio=W / H):
     return im.crop((0, y, w, y + nh))
 
 
+def extend_bottom(im, ratio=W / H):
+    """Passe une capture 16:9 en 16:10 sans rien rogner, en prolongeant sa dernière ligne de pixels."""
+    w, h = im.size
+    out = Image.new(im.mode, (w, int(w / ratio)))
+    out.paste(im, (0, 0))
+    out.paste(im.crop((0, h - 1, w, h)).resize((w, out.height - h)), (0, h))
+    return out
+
+
 def dungeon_escape():
     im = Image.open(os.path.join(DEV, 'dungeon-escape/static/assets/adventurers/dragon.png'))
     save(crop_ratio(im, cy=0.18), 'dungeon-escape.webp')  # cadré sur la tête du dragon
@@ -148,9 +157,9 @@ def gallery(shots):
     # Dungeon Escape : les aventuriers face au dragon, puis une carte Événement
     g(shot('de', '27-sprites-idle.png').crop((110, 20, 830, 470)), 'dungeon-escape-board.webp')
     g(shot('de', '43-event-card-desktop.png').crop((470, 244, 1130, 656)), 'dungeon-escape-event.webp')
-    # Malefic Realms : les quatre factions, le plateau, le choix des héros
-    g(crop_ratio(Image.open(os.path.join(DEV, 'malefic-realms/static/assets/cards/factions.jpg'))), 'malefic-realms.webp')
-    g(shot('malefic-realms', '10-game-desktop.png').crop((250, 60, 1330, 735)), 'malefic-realms-board.webp')
+    # Malefic Realms : le poster (cadré sur les factions), l'interface en partie, le choix des héros
+    g(crop_ratio(Image.open(os.path.join(DEV, 'malefic-realms/static/assets/cards/poster.jpg')), cy=0.64), 'malefic-realms.webp')
+    g(extend_bottom(shot('malefic-realms', '10-game-desktop.png')), 'malefic-realms-board.webp')
     g(shot('malefic-realms', '02-heroes-selected.png').crop((586, 198, 1354, 678)), 'malefic-realms-heroes.webp')
     # Lect'O'Note : lecture en cours (mesure surlignée), puis le bilan de l'analyse
     g(shot('music-reader', '4-playing.png'), 'music-reader-player.webp')

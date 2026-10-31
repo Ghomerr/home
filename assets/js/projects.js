@@ -9,6 +9,26 @@
 // downloads : (optionnel) boutons de téléchargement par OS ('windows' | 'macos' | 'linux')
 window.PROJECTS = [
   {
+    id: 'malefic-realms',
+    title: 'Malefic Realms',
+    kind: 'Jeu coopératif multijoueur · Web',
+    status: 'done',
+    images: [
+      { src: 'assets/img/gallery/malefic-realms.webp', alt: 'Poster du jeu : un dragon doré, des démons, un aboleth et un cultiste au-dessus de la carte des quatre continents' },
+      { src: 'assets/img/gallery/malefic-realms-board.webp', alt: 'Une partie en cours : l\'équipe, le plateau des continents reliés par des chemins lumineux, les actions et la main du héros' },
+      { src: 'assets/img/gallery/malefic-realms-heroes.webp', alt: 'Cartes de héros illustrées : paladine, divinatrice et érudit' },
+    ],
+    accent: '#9b5de5',
+    description:
+      'Toutes les règles de Pandemic dans un univers Donjons & Dragons : morts-vivants, démons, aboleths et ' +
+      'fanatiques de Tiamat envahissent quatre continents. De 2 à 4 héros coopèrent pour contenir la menace ' +
+      'et forger les quatre reliques qui les vaincront.',
+    tags: ['Node.js', 'Express', 'Socket.IO', 'De 2 à 4 héros'],
+    url: 'https://malefic-realms.onrender.com/',
+    linkLabel: 'Jouer',
+    render: true, // dépôt privé : pas de lien GitHub
+  },
+  {
     id: 'dungeon-escape',
     title: 'Dungeon Escape',
     kind: 'Jeu coopératif multijoueur · Web',
@@ -28,26 +48,6 @@ window.PROJECTS = [
     linkLabel: 'Jouer',
     render: true,
     repo: 'https://github.com/Ghomerr/dungeon-escape',
-  },
-  {
-    id: 'malefic-realms',
-    title: 'Malefic Realms',
-    kind: 'Jeu coopératif multijoueur · Web',
-    status: 'wip',
-    images: [
-      { src: 'assets/img/gallery/malefic-realms.webp', alt: 'Les quatre factions maléfiques : morts-vivants, démons, aboleths et fanatiques de Tiamat' },
-      { src: 'assets/img/gallery/malefic-realms-board.webp', alt: 'Le plateau de jeu : des continents reliés par des chemins lumineux' },
-      { src: 'assets/img/gallery/malefic-realms-heroes.webp', alt: 'Cartes de héros illustrées : paladine, divinatrice et érudit' },
-    ],
-    accent: '#9b5de5',
-    description:
-      'Toutes les règles de Pandemic dans un univers Donjons & Dragons : morts-vivants, démons, aboleths et ' +
-      'fanatiques de Tiamat envahissent quatre continents. De 2 à 4 héros coopèrent pour contenir la menace ' +
-      'et forger les quatre reliques qui les vaincront.',
-    tags: ['Node.js', 'Express', 'Socket.IO', 'De 2 à 4 héros'],
-    url: 'https://malefic-realms.onrender.com/',
-    linkLabel: 'Jouer',
-    render: true, // dépôt privé : pas de lien GitHub
   },
   {
     id: 'music-reader',
