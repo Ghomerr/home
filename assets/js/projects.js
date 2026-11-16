@@ -50,6 +50,46 @@ window.PROJECTS = [
     repo: 'https://github.com/Ghomerr/dungeon-escape',
   },
   {
+    id: 'fallout-companion',
+    title: 'Fallout – Compagnon de jeu',
+    kind: 'Aide de jeu de société · Application mobile (PWA)',
+    status: 'done',
+    images: [
+      { src: 'assets/img/gallery/fallout.webp', alt: 'Accueil de l\'application : logo Fallout sur une armure assistée, « Survivre aux terres désolées », accès rapide à la mise en place et au tour de jeu' },
+      { src: 'assets/img/gallery/fallout-mobile.webp', alt: 'Trois écrans sur mobile : la mise en place pas à pas, le tour de jeu et ses 6 actions, l\'assistant de combat qui annonce « Ennemi tué ! »' },
+      { src: 'assets/img/gallery/fallout-play.webp', alt: 'Écran « En jeu » sur ordinateur : manche, tour du joueur, ses deux actions et les six actions possibles' },
+    ],
+    accent: '#3fae60',
+    description:
+      'Tout pour jouer à Fallout, le jeu de plateau, sans ouvrir le livret : mise en place pas à pas, ' +
+      'déroulé du tour, assistants de combat et de test qui font les comptes, niveaux, glossaire, ' +
+      'et un mode coopératif. S\'installe sur le téléphone et fonctionne hors ligne.',
+    tags: ['JavaScript', 'PWA', 'Hors ligne', 'Mobile'],
+    url: 'https://ghomerr.github.io/fallout-boardgame-companion/',
+    linkLabel: 'Ouvrir',
+    repo: 'https://github.com/Ghomerr/fallout-boardgame-companion',
+  },
+  {
+    id: 'happy-double',
+    title: 'Happy Double – Feuille de score',
+    kind: 'Feuille de score de jeu de société · Application mobile (PWA)',
+    status: 'done',
+    images: [
+      { src: 'assets/img/gallery/happy-double.webp', alt: 'Feuille de score Happy Double remplie à la main : manches, doubles, filet de sécurité, ligne nulle et totaux' },
+      { src: 'assets/img/gallery/happy-double-mobile.webp', alt: 'Deux écrans sur mobile : la saisie d\'une case au clavier, puis le classement des trois joueurs' },
+      { src: 'assets/img/gallery/happy-double-print.webp', alt: 'Choix de la mise en page pour imprimer des feuilles vierges : 8 ou 4 feuilles par page A4' },
+    ],
+    accent: '#ee3d80',
+    description:
+      'La feuille de score officielle de Happy Double, à remplir sur téléphone : saisie au clavier, ' +
+      'doubles, filet de sécurité et quitte ou double comptés automatiquement, plusieurs joueurs, ' +
+      'classement, et impression de feuilles vierges. S\'installe et fonctionne hors ligne.',
+    tags: ['JavaScript', 'SVG', 'PWA', 'Hors ligne'],
+    url: 'https://ghomerr.github.io/happy-double-score/',
+    linkLabel: 'Ouvrir',
+    repo: 'https://github.com/Ghomerr/happy-double-score',
+  },
+  {
     id: 'music-reader',
     title: 'Lect\'O\'Note Matic 3000',
     kind: 'Application de bureau · Windows, macOS, Linux',

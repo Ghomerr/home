@@ -11,6 +11,9 @@ Lect'O'Note), rangées par projet dans le dossier donné :
   de/              tools/devcheck.js --gallery de dungeon-escape
   malefic-realms/  tools/.devcheck de malefic-realms
   skull-king/, roidesnains/, music-reader/   parties jouées par des bots
+  fallout/, happy-double/   versions GitHub Pages ; desktop 1440x900, mobile 412x915 @2x
+                   (Happy Double : partie à 3 joueurs injectée dans le localStorage)
+Seuls les projets dont le dossier est présent sont régénérés.
 """
 import os, re, random, sys
 from PIL import Image, ImageFilter, ImageOps
@@ -147,31 +150,75 @@ def card_fan(names, folder, background):
     return bg
 
 
+def phones(screens, background, height=520):
+    """Captures mobiles (ratio d'écran de téléphone) côte à côte sur un fond flouté."""
+    from PIL import ImageDraw
+    bg = ImageOps.fit(background.convert('RGB'), (W, H), Image.LANCZOS)
+    bg = bg.filter(ImageFilter.GaussianBlur(8)).point(lambda v: int(v * .45)).convert('RGBA')
+    n, bezel = len(screens), 7
+    shots = []
+    for i, im in enumerate(screens):
+        h = height - (0 if i == n // 2 or n == 2 else 30)  # téléphone du milieu au premier plan
+        im = im.convert('RGBA').resize((round(im.width * h / im.height), h), Image.LANCZOS)
+        mask = Image.new('L', im.size, 0)
+        ImageDraw.Draw(mask).rounded_rectangle((0, 0, im.width - 1, im.height - 1), radius=22, fill=255)
+        im.putalpha(mask)
+        body = Image.new('RGBA', (im.width + 2 * bezel, im.height + 2 * bezel), (0, 0, 0, 0))
+        ImageDraw.Draw(body).rounded_rectangle((0, 0, body.width - 1, body.height - 1), radius=22 + bezel,
+                                               fill=(14, 14, 16, 255), outline=(70, 70, 76, 255), width=2)
+        body.alpha_composite(im, (bezel, bezel))
+        shots.append(body)
+    gap = 34
+    x = (W - sum(s.width for s in shots) - gap * (n - 1)) // 2
+    for s in shots:
+        y = (H - s.height) // 2
+        shadow = Image.new('RGBA', s.size, (0, 0, 0, 0))
+        shadow.putalpha(s.getchannel('A').point(lambda a: a * 0.7))
+        shadow = shadow.filter(ImageFilter.GaussianBlur(12))
+        bg.alpha_composite(shadow, (x + 6, y + 12))
+        bg.alpha_composite(s, (x, y))
+        x += s.width + gap
+    return bg
+
+
 def gallery(shots):
-    """Images des carrousels (2e et 3e images de chaque projet)."""
+    """Images des carrousels (2e et 3e images de chaque projet).
+    Seuls les projets dont le dossier de captures existe dans `shots` sont régénérés."""
     out = os.path.join(OUT, 'gallery')
     os.makedirs(out, exist_ok=True)
     shot = lambda *p: Image.open(os.path.join(shots, *p))
+    has = lambda folder: os.path.isdir(os.path.join(shots, folder))
     g = lambda im, name: save(im, os.path.join('gallery', name))
 
-    # Dungeon Escape : les aventuriers face au dragon, puis une carte Événement
-    g(shot('de', '27-sprites-idle.png').crop((110, 20, 830, 470)), 'dungeon-escape-board.webp')
-    g(shot('de', '43-event-card-desktop.png').crop((470, 244, 1130, 656)), 'dungeon-escape-event.webp')
-    # Malefic Realms : le poster (cadré sur les factions), l'interface en partie, le choix des héros
-    g(crop_ratio(Image.open(os.path.join(DEV, 'malefic-realms/static/assets/cards/poster.jpg')), cy=0.64), 'malefic-realms.webp')
-    g(extend_bottom(shot('malefic-realms', '10-game-desktop.png')), 'malefic-realms-board.webp')
-    g(shot('malefic-realms', '02-heroes-selected.png').crop((586, 198, 1354, 678)), 'malefic-realms-heroes.webp')
-    # Lect'O'Note : lecture en cours (mesure surlignée), puis le bilan de l'analyse
-    g(shot('music-reader', '4-playing.png'), 'music-reader-player.webp')
-    g(shot('music-reader', '2-analyse.png'), 'music-reader-analyse.webp')
-    # Skull King : la table en pleine manche, puis les cartes spéciales
-    g(shot('skull-king', 'table-6-6.png').crop((360, 160, 1240, 710)), 'skull-king-table.webp')
-    sk = os.path.join(DEV, 'skull-king/static/assets')
-    g(card_fan(['pirate_juanita-jade.jpg', 'mermaid_alyra.jpg', 'skull-king.jpg', 'tigresse_choice.jpg', 'pirate_will-le-bandit.jpg'],
-               sk, Image.open(os.path.join(sk, 'cards-background.jpg'))), 'skull-king-cards.webp')
-    # Roi des Nains : un pli en cours, puis le choix de la quête
-    g(shot('roidesnains', 'trick-1-h8.png').crop((200, 10, 1400, 760)), 'roidesnains-trick.webp')
-    g(shot('roidesnains', 'quest-3.png').crop((250, 80, 1490, 855)), 'roidesnains-quest.webp')
+    if has('de'):  # Dungeon Escape : les aventuriers face au dragon, puis une carte Événement
+        g(shot('de', '27-sprites-idle.png').crop((110, 20, 830, 470)), 'dungeon-escape-board.webp')
+        g(shot('de', '43-event-card-desktop.png').crop((470, 244, 1130, 656)), 'dungeon-escape-event.webp')
+    if has('malefic-realms'):  # Malefic Realms : le poster (cadré sur les factions), l'interface en partie, le choix des héros
+        g(crop_ratio(Image.open(os.path.join(DEV, 'malefic-realms/static/assets/cards/poster.jpg')), cy=0.64), 'malefic-realms.webp')
+        g(extend_bottom(shot('malefic-realms', '10-game-desktop.png')), 'malefic-realms-board.webp')
+        g(shot('malefic-realms', '02-heroes-selected.png').crop((586, 198, 1354, 678)), 'malefic-realms-heroes.webp')
+    if has('music-reader'):  # Lect'O'Note : lecture en cours (mesure surlignée), puis le bilan de l'analyse
+        g(shot('music-reader', '4-playing.png'), 'music-reader-player.webp')
+        g(shot('music-reader', '2-analyse.png'), 'music-reader-analyse.webp')
+    if has('skull-king'):  # Skull King : la table en pleine manche, puis les cartes spéciales
+        g(shot('skull-king', 'table-6-6.png').crop((360, 160, 1240, 710)), 'skull-king-table.webp')
+        sk = os.path.join(DEV, 'skull-king/static/assets')
+        g(card_fan(['pirate_juanita-jade.jpg', 'mermaid_alyra.jpg', 'skull-king.jpg', 'tigresse_choice.jpg', 'pirate_will-le-bandit.jpg'],
+                   sk, Image.open(os.path.join(sk, 'cards-background.jpg'))), 'skull-king-cards.webp')
+    if has('roidesnains'):  # Roi des Nains : un pli en cours, puis le choix de la quête
+        g(shot('roidesnains', 'trick-1-h8.png').crop((200, 10, 1400, 760)), 'roidesnains-trick.webp')
+        g(shot('roidesnains', 'quest-3.png').crop((250, 80, 1490, 855)), 'roidesnains-quest.webp')
+    if has('fallout'):  # Fallout : l'accueil, trois écrans mobiles (mise en place, tour, assistant de combat), le tour en desktop
+        g(shot('fallout', 'home-desktop.png').crop((222, 62, 1310, 742)), 'fallout.webp')  # bandeau + 1re rangée
+        g(phones([shot('fallout', n) for n in ('setup-mobile.png', 'play-mobile.png', 'combat-mobile.png')],
+                 Image.open(os.path.join(DEV, 'fallout-boardgame-companion/img/hero.jpg'))), 'fallout-mobile.webp')
+        g(shot('fallout', 'play-desktop.png'), 'fallout-play.webp')
+    if has('happy-double'):  # Happy Double : une partie à 3 en desktop, la saisie et les scores sur mobile, l'impression
+        sheet = shot('happy-double', 'sheet-desktop.png').crop((40, 0, 1400, 850))
+        g(sheet, 'happy-double.webp')
+        g(phones([shot('happy-double', n) for n in ('keypad-mobile.png', 'scores-mobile.png')], sheet, height=540),
+          'happy-double-mobile.webp')
+        g(shot('happy-double', 'print-desktop.png').crop((166, 110, 1278, 805)), 'happy-double-print.webp')
 
 
 if __name__ == '__main__':
