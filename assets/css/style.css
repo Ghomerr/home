@@ -314,9 +314,10 @@ h1, h2, h3 { font-family: var(--font-display); line-height: 1.15; margin: 0; let
 .card-actions .btn-primary:hover { box-shadow: 0 10px 24px -10px var(--accent); }
 .card-actions .btn-primary svg { transition: transform .2s ease; }
 .card-actions .btn-primary:hover svg { transform: translate(2px, -2px); }
-/* Toute la tuile est cliquable vers le projet ; le lien GitHub reste au-dessus */
-.card-link::after { content: ""; position: absolute; inset: 0; z-index: 1; }
-.card-actions .btn-icon { position: relative; z-index: 3; }
+/* Toute la tuile est cliquable vers le projet (lien .card-cover) ; les boutons restent au-dessus
+   et ne réagissent qu'à leur propre survol */
+.card-cover { position: absolute; inset: 0; z-index: 1; }
+.card-actions .btn-primary, .card-actions .btn-icon { position: relative; z-index: 3; }
 
 /* Téléchargements par OS */
 .downloads { margin: 0 0 16px; }

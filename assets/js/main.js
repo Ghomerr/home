@@ -98,6 +98,12 @@
         'title="Code source sur GitHub" aria-label="Code source de ' + escapeHtml(p.title) + ' sur GitHub">' +
         ICONS.github + '</a>';
     }
+    // Toute la tuile est cliquable vers le projet : lien invisible sous les boutons (hors clavier et lecteurs
+    // d'écran, qui passent par le bouton), pour que les effets du bouton ne s'activent qu'à son survol
+    var cover = p.url
+      ? '<a class="card-cover" href="' + escapeHtml(p.url) + '" target="_blank" rel="noopener" tabindex="-1" ' +
+        'aria-hidden="true" data-track="jouer" data-projet="' + escapeHtml(p.id) + '"></a>'
+      : '';
     var hint = p.url && p.render
       ? '<p class="card-hint">Hébergement gratuit : le premier chargement peut prendre jusqu\'à une minute.</p>'
       : '';
@@ -114,7 +120,7 @@
       '<ul class="tags">' + (p.tags || []).map(function (t) { return '<li>' + escapeHtml(t) + '</li>'; }).join('') + '</ul>' +
       (p.downloads ? renderDownloads(p) : '') +
       '<div class="card-actions">' + actions + '</div>' + hint +
-      '</div>' +
+      '</div>' + cover +
       '</article>'
     );
   }
